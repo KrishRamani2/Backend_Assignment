@@ -33,12 +33,18 @@ export const updateUserStatusSchema = z.object({
   isActive: z.boolean(),
 });
 
+export const updateUserRoleSchema = z.object({
+  role: z.enum(ALL_ROLES as [string, ...string[]], {
+    message: `Role must be one of: ${ALL_ROLES.join(', ')}`,
+  }),
+});
+
 // ─── Financial Record Schemas ────────────────────────────
 
 export const createRecordSchema = z.object({
   amount: z.number().positive('Amount must be a positive number'),
   type: z.enum([TRANSACTION_TYPES.INCOME, TRANSACTION_TYPES.EXPENSE], {
-    errorMap: () => ({ message: 'Type must be INCOME or EXPENSE' }),
+    message: 'Type must be INCOME or EXPENSE',
   }),
   category: z
     .string()

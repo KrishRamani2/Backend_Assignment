@@ -3,7 +3,7 @@ import { UserController } from '../controllers/user.controller';
 import { authenticate } from '../middleware/auth';
 import { roleGuard } from '../middleware/roleGuard';
 import { validateBody } from '../middleware/validate';
-import { updateUserStatusSchema } from '../utils/validators';
+import { updateUserStatusSchema, updateUserRoleSchema } from '../utils/validators';
 import { ROLES } from '../utils/constants';
 
 const router = Router();
@@ -108,6 +108,44 @@ router.patch(
   roleGuard(ROLES.ADMIN),
   validateBody(updateUserStatusSchema),
   UserController.updateUserStatus
+);
+
+/**
+ * @swagger
+ * /api/users/{id}/role:
+ *   patch:
+ *     summary: Update a user's role (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [role]
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 example: "ANALYST"
+ *     responses:
+ *       200:
+ *         description: User role updated
+ *       404:
+ *         description: User not found
+ */
+router.patch(
+  '/:id/role',
+  roleGuard(ROLES.ADMIN),
+  validateBody(updateUserRoleSchema),
+  UserController.updateUserRole
 );
 
 export default router;

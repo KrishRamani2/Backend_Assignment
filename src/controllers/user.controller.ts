@@ -46,4 +46,20 @@ export class UserController {
       next(error);
     }
   }
+
+  static async updateUserRole(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const user = await UserService.updateUserRole(
+        req.params.id as string,
+        req.body.role
+      );
+      sendSuccess(res, user, 'User role updated successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }

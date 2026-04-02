@@ -60,4 +60,27 @@ export class UserService {
       },
     });
   }
+
+  static async updateUserRole(userId: string, role: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw ApiError.notFound('User not found');
+    }
+
+    return prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        isActive: true,
+        updatedAt: true,
+      },
+    });
+  }
 }
