@@ -85,7 +85,7 @@ router.use(authenticate);
  */
 router.get(
   '/summary',
-  roleGuard(ROLES.ANALYST, ROLES.ADMIN),
+  roleGuard(ROLES.VIEWER, ROLES.ANALYST, ROLES.ADMIN),
   DashboardController.getSummary
 );
 
