@@ -1,0 +1,55 @@
+// ─────────────────────────────────────────────────────────
+// Prisma Schema — Finance Dashboard Backend (Prisma 7+)
+// ─────────────────────────────────────────────────────────
+// Uses SQLite for development. Switch datasource to
+// "postgresql" for production.
+// ─────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+/// User roles: VIEWER | ANALYST | ADMIN
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("VIEWER") // VIEWER | ANALYST | ADMIN
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  financialRecords FinancialRecord[]
+
+  @@index([email])
+  @@index([role])
+}
+
+/// Financial records with soft-delete support
+model FinancialRecord {
+  id              String   @id @default(uuid())
+  amount          Float
+  type            String   // INCOME | EXPENSE
+  category        String
+  description     String?
+  transactionDate DateTime
+  isDeleted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([category])
+  @@index([transactionDate])
+  @@index([isDeleted])
+}
