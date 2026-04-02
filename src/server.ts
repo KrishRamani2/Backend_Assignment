@@ -77,7 +77,9 @@ const authLimiter = rateLimit({
 });
 app.use('/api/auth/', authLimiter);
 
-// ─── API Docs ──────────────────────────────────────
+// ─── API Docs (Swagger UI via CDN) ─────────────────
+// Uses CDN assets so this works on Vercel serverless
+// (swagger-ui-express serves static files from disk which breaks on Vercel)
 
 // Serve raw OpenAPI JSON spec
 app.get('/api-docs/json', (_req, res) => {
@@ -85,19 +87,41 @@ app.get('/api-docs/json', (_req, res) => {
   res.json(swaggerSpec);
 });
 
-// Serve Redoc UI — renders entirely from CDN, no local static files needed
+// Serve Swagger UI — fully CDN-based, works locally + Vercel + Docker
 app.get('/api-docs', (_req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Finance Dashboard API Docs</title>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Dashboard API</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <style>
+    body { margin: 0; background: #fafafa; }
+    .swagger-ui .topbar { background: #1a1a2e; }
+    .swagger-ui .topbar .link { display: none; }
+  </style>
 </head>
 <body>
-  <redoc spec-url='/api-docs/json'></redoc>
-  <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = () => {
+      SwaggerUIBundle({
+        url: '/api-docs/json',
+        dom_id: '#swagger-ui',
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: 'StandaloneLayout',
+        persistAuthorization: true,
+        displayRequestDuration: true,
+        filter: true,
+        tryItOutEnabled: true,
+        deepLinking: true,
+      });
+    };
+  </script>
 </body>
 </html>`);
 });
