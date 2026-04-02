@@ -86,8 +86,7 @@ app.get('/api-docs/json', (_req, res) => {
 });
 
 // Serve Redoc UI — renders entirely from CDN, no local static files needed
-app.get('/api-docs', (req, res) => {
-  const specUrl = `${req.protocol}://${req.get('host')}/api-docs/json`;
+app.get('/api-docs', (_req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.send(`<!DOCTYPE html>
 <html lang="en">
@@ -97,7 +96,7 @@ app.get('/api-docs', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <redoc spec-url='${specUrl}'></redoc>
+  <redoc spec-url='/api-docs/json'></redoc>
   <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
 </body>
 </html>`);
