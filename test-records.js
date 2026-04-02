@@ -58,7 +58,7 @@ async function runTests() {
       email,
       password: 'password123',
       name: 'Test User',
-      role: 'VIEWER'
+      role: 'ADMIN'
     });
     console.log(`Register status: ${registerRes.status}`);
     
