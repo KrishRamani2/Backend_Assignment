@@ -81,6 +81,7 @@ export const recordQuerySchema = z.object({
       message: 'Invalid endDate format',
     })
     .optional(),
+  search: z.string().optional(),
   sortBy: z
     .enum(['transactionDate', 'amount', 'createdAt'])
     .optional()

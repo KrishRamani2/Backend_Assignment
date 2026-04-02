@@ -128,25 +128,32 @@ app.use((_req, res) => {
 app.use(errorHandler);
 
 // ─── Start Server ────────────────────────────────────────
-const server = app.listen(config.port, () => {
-  console.log(`
-  ╔══════════════════════════════════════════════════╗
-  ║     🏦 Finance Dashboard API                    ║
-  ║     Port:    ${String(config.port).padEnd(35)}║
-  ║     Env:     ${config.nodeEnv.padEnd(35)}║
-  ║     Docs:    http://localhost:${config.port}/api-docs${' '.repeat(9)}║
-  ║     Health:  http://localhost:${config.port}/health${' '.repeat(11)}║
-  ╚══════════════════════════════════════════════════╝
-  `);
-});
+let server: any;
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(config.port, () => {
+    console.log(`
+    ╔══════════════════════════════════════════════════╗
+    ║     🏦 Finance Dashboard API                    ║
+    ║     Port:    ${String(config.port).padEnd(35)}║
+    ║     Env:     ${config.nodeEnv.padEnd(35)}║
+    ║     Docs:    http://localhost:${config.port}/api-docs${' '.repeat(9)}║
+    ║     Health:  http://localhost:${config.port}/health${' '.repeat(11)}║
+    ╚══════════════════════════════════════════════════╝
+    `);
+  });
+}
 
 // ─── Graceful Shutdown ───────────────────────────────────
 const gracefulShutdown = (signal: string) => {
   console.log(`\n${signal} received. Shutting down gracefully...`);
-  server.close(() => {
-    console.log('Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 };
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));

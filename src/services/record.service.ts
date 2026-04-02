@@ -24,6 +24,7 @@ interface RecordQuery {
   limit: string;
   type?: string;
   category?: string;
+  search?: string;
   startDate?: string;
   endDate?: string;
   sortBy: string;
@@ -73,6 +74,13 @@ export class FinancialRecordService {
 
     if (query.category) {
       where.category = { contains: query.category };
+    }
+
+    if (query.search) {
+      where.OR = [
+        { category: { contains: query.search } },
+        { description: { contains: query.search } },
+      ];
     }
 
     if (query.startDate || query.endDate) {

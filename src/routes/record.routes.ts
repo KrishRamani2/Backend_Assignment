@@ -96,7 +96,12 @@ router.post(
  *         name: category
  *         schema:
  *           type: string
- *         description: Filter by category (partial match)
+ *         description: Filter by category (exact match)
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by description or category (partial match)
  *       - in: query
  *         name: startDate
  *         schema:

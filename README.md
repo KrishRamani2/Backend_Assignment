@@ -37,6 +37,55 @@
 
 ---
 
+## 🎯 Core Requirements & Implementation Details
+
+All required and optional features have been fully implemented, integrated, and heavily tested using automated Jest/Supertest suites.
+
+### 1. User and Role Management
+Provides robust structures to manage users, authentication states, and distinct access hierarchies.
+- **Logic:** Maps natively through the Prisma `User` schema. New registrations default to `VIEWER`. We utilize an enumerated hierarchy (`VIEWER`, `ANALYST`, `ADMIN`) mapped to constants in `src/utils/constants.ts`. The `user.service.ts` logic enables Admins to safely mutate roles or disable users via the database.
+- **APIs Used:** 
+  - `POST /api/auth/register` (Public)
+  - `POST /api/auth/login` (Public)
+  - `PATCH /api/users/:id/status` (Admin)
+
+### 2. Financial Records Management
+Fully tracks, edits, and filters financial transactions.
+- **Logic:** Powered by the `FinancialRecord` schema bridging relationships to their respective `User`. The backend (`record.service.ts`) passes explicit query parameters dictating `skip`, `take`, text searches, and range calculations to Prisma's dynamic `findMany` logic natively supporting dynamic `?category=`, `?search=`, and `?type=` URL queries.
+- **APIs Used:**
+  - `POST /api/records`
+  - `GET /api/records` (Supports filtering via `?startDate`, `?endDate`, `?type`, `?category`, `?search`)
+  - `PUT /api/records/:id`
+
+### 3. Dashboard Summary APIs
+Creates mathematical aggregate breakdowns dynamically without bogging down databases.
+- **Logic:** The `dashboard.service.ts` avoids single large queries. Instead, it fires a parallelized `Promise.all()` fetching individual analytics (e.g., net balance vs. month-to-month group-bys) utilizing Prisma's `.aggregate` and `.groupBy` natively, computing category-wise totals cleanly.
+- **APIs Used:**
+  - `GET /api/dashboard/summary` (Requires Analyst or Admin role)
+
+### 4. Access Control Logic
+Creates an airtight boundary dictating resource ownership per request.
+- **Logic:** We utilize clean Express Middlewares. `auth.ts` intercepts requests, unwraps JWT Bearer tokens to assert identity. `roleGuard.ts` intercepts this and acts as a firewall matching the `req.user.role` array against the endpoint's strict necessities. Ownership guards further live within the `record.service.ts` preventing viewers from editing IDs they don't own by throwing `403 Forbidden` exceptions.
+
+### 5. Validation and Error Handling
+Strict evaluations preventing any garbage data from hitting Database models.
+- **Logic:** Every single endpoint binds to **Zod Schemas** (`src/utils/validators.ts`). The `validate.ts` middleware filters incoming body structures or search queries, raising an explicit `ZodError` safely intercepted by a global `errorHandler.ts` returning strict 400 JSON layouts rather than halting Node.js processes.
+
+### 6. Data Persistence
+- **Logic:** Built securely and efficiently leveraging **Prisma ORM** upon **SQLite** to easily permit deployment without users installing RDBMS tools natively. Upgrading persistence is as simple as flipping the provider string to `postgresql` in `schema.prisma`.
+
+### 7. Optional Enhancements
+*Every single requested optional enhancement has been fully successfully implemented.*
+- **Authentication**: JWT cookies issued through `jsonwebtoken`.
+- **Pagination**: `limit` & `page` queries slice record listings gracefully relying on Prisma.
+- **Search Support**: Partial, case-insensitive text matching dynamically across descriptions via `?search=` logic.
+- **Soft Delete**: An `isDeleted` flag exists masking records deleted via `DELETE /api/records` protecting audit trails.
+- **Rate Limiting**: Defends endpoints natively limiting 100reqs/15m (or 20reqs for logins) utilizing `express-rate-limit`.
+- **API Documentation**: Exposed dynamically over visual **Swagger UI** generated layouts at `/api-docs`.
+- **Unit & Integration Tests**: Constructed via **Jest** and **Supertest** running successfully and fully verifying search behavior, ownership restrictions, and database mutations within `src/__tests__/`. Run them anytime via `npm test`.
+
+---
+
 ## 🛠 Tech Stack
 
 | Tool | Purpose |
