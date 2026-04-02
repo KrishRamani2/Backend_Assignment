@@ -10,7 +10,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import swaggerUi from 'swagger-ui-express';
 
 import { config } from './config';
 import { swaggerSpec } from './config/swagger';
@@ -27,20 +26,8 @@ const app = express();
 
 // ─── Global Middleware ───────────────────────────────────
 
-// Security headers — relax CSP to allow Swagger UI CDN assets
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
-        imgSrc: ["'self'", "data:", "validator.swagger.io"],
-        connectSrc: ["'self'", "cdnjs.cloudflare.com"],
-      },
-    },
-  })
-);
+// Security headers
+app.use(helmet({ contentSecurityPolicy: false }));
 
 // CORS
 app.use(
@@ -90,26 +77,30 @@ const authLimiter = rateLimit({
 });
 app.use('/api/auth/', authLimiter);
 
-// ─── Swagger Documentation ──────────────────────────────
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'Finance Dashboard API Docs',
-    customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css',
-    customJs: [
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js',
-    ],
-    swaggerOptions: { persistAuthorization: true },
-  })
-);
+// ─── API Docs ──────────────────────────────────────
 
-// Serve raw swagger JSON
+// Serve raw OpenAPI JSON spec
 app.get('/api-docs/json', (_req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  res.json(swaggerSpec);
+});
+
+// Serve Redoc UI — renders entirely from CDN, no local static files needed
+app.get('/api-docs', (req, res) => {
+  const specUrl = `${req.protocol}://${req.get('host')}/api-docs/json`;
+  res.setHeader('Content-Type', 'text/html');
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Finance Dashboard API Docs</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <redoc spec-url='${specUrl}'></redoc>
+  <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
+</body>
+</html>`);
 });
 
 // ─── Health Check ────────────────────────────────────────
