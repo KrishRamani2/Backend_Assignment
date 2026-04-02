@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────────────────
-// Auth Routes — /api/auth
-// ─────────────────────────────────────────────────────────
-
 import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
 import { validateBody } from '../middleware/validate';

@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────────────────
-// Financial Record Routes — /api/records
-// ─────────────────────────────────────────────────────────
-
 import { Router } from 'express';
 import { RecordController } from '../controllers/record.controller';
 import { authenticate } from '../middleware/auth';

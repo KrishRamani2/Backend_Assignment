@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────────────────
-// Swagger / OpenAPI Configuration
-// ─────────────────────────────────────────────────────────
-
 import swaggerJsdoc from 'swagger-jsdoc';
 
 const options: swaggerJsdoc.Options = {

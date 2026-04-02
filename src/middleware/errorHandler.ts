@@ -1,15 +1,9 @@
-// ─────────────────────────────────────────────────────────
-// Centralized Error Handler Middleware
-// ─────────────────────────────────────────────────────────
 
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../utils/apiError';
 import { config } from '../config';
 
-/**
- * Global error handler. Catches all errors thrown in route
- * handlers and middleware, returning a consistent JSON response.
- */
+
 export const errorHandler = (
   err: Error,
   _req: Request,

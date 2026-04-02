@@ -1,9 +1,3 @@
-// ─────────────────────────────────────────────────────────
-// JWT Authentication Middleware
-// ─────────────────────────────────────────────────────────
-// Verifies the Bearer token and attaches user info to req.
-// ─────────────────────────────────────────────────────────
-
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
@@ -16,7 +10,7 @@ export interface JwtPayload {
   role: string;
 }
 
-// Extend Express Request to include user
+
 declare global {
   namespace Express {
     interface Request {
@@ -25,11 +19,6 @@ declare global {
   }
 }
 
-/**
- * Middleware to authenticate JWT tokens.
- * Extracts the token from Authorization header, verifies it,
- * and attaches user info to the request object.
- */
 export const authenticate = async (
   req: Request,
   _res: Response,

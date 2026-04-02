@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────────────────
-// Dashboard Routes — /api/dashboard
-// ─────────────────────────────────────────────────────────
-
 import { Router } from 'express';
 import { DashboardController } from '../controllers/dashboard.controller';
 import { authenticate } from '../middleware/auth';

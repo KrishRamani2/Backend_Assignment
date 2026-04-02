@@ -1,16 +1,8 @@
-// ─────────────────────────────────────────────────────────
-// Auth Controller — Handles registration & login requests
-// ─────────────────────────────────────────────────────────
-
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/auth.service';
 import { sendSuccess } from '../utils/response';
 
 export class AuthController {
-  /**
-   * POST /api/auth/register
-   * Register a new user account.
-   */
   static async register(
     req: Request,
     res: Response,
@@ -24,10 +16,6 @@ export class AuthController {
     }
   }
 
-  /**
-   * POST /api/auth/login
-   * Authenticate user and return JWT token.
-   */
   static async login(
     req: Request,
     res: Response,
@@ -41,10 +29,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * GET /api/auth/me
-   * Get the current authenticated user's profile.
-   */
+
   static async getProfile(
     req: Request,
     res: Response,

@@ -2,10 +2,6 @@ import { prisma } from '../prisma/client';
 import { ApiError } from '../utils/apiError';
 
 export class UserService {
-  /**
-   * Get all users (admin only).
-   * Excludes password from the response.
-   */
   static async getAllUsers() {
     return prisma.user.findMany({
       select: {
@@ -21,10 +17,6 @@ export class UserService {
     });
   }
 
-  /**
-   * Get a user by ID.
-   * Excludes password from the response.
-   */
   static async getUserById(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -46,9 +38,6 @@ export class UserService {
     return user;
   }
 
-  /**
-   * Update a user's active status (admin only).
-   */
   static async updateUserStatus(userId: string, isActive: boolean) {
     const user = await prisma.user.findUnique({
       where: { id: userId },

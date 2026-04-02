@@ -1,16 +1,10 @@
-// ─────────────────────────────────────────────────────────
-// User Controller — User management endpoints
-// ─────────────────────────────────────────────────────────
 
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/user.service';
 import { sendSuccess } from '../utils/response';
 
 export class UserController {
-  /**
-   * GET /api/users
-   * Get all users (admin only).
-   */
+
   static async getAllUsers(
     _req: Request,
     res: Response,
@@ -24,10 +18,6 @@ export class UserController {
     }
   }
 
-  /**
-   * GET /api/users/:id
-   * Get a specific user by ID.
-   */
   static async getUserById(
     req: Request,
     res: Response,
@@ -41,10 +31,6 @@ export class UserController {
     }
   }
 
-  /**
-   * PATCH /api/users/:id/status
-   * Update a user's active status (admin only).
-   */
   static async updateUserStatus(
     req: Request,
     res: Response,
