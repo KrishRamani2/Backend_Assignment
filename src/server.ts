@@ -27,8 +27,20 @@ const app = express();
 
 // ─── Global Middleware ───────────────────────────────────
 
-// Security headers
-app.use(helmet());
+// Security headers — relax CSP to allow Swagger UI CDN assets
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+        imgSrc: ["'self'", "data:", "validator.swagger.io"],
+        connectSrc: ["'self'", "cdnjs.cloudflare.com"],
+      },
+    },
+  })
+);
 
 // CORS
 app.use(
@@ -90,6 +102,7 @@ app.use(
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js',
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js',
     ],
+    swaggerOptions: { persistAuthorization: true },
   })
 );
 
