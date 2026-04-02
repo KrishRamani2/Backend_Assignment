@@ -71,7 +71,7 @@ export class DashboardService {
         netBalance: income - expense,
         totalRecords: recordCount,
       },
-      categoryBreakdown: categoryTotals.map((ct) => ({
+      categoryBreakdown: categoryTotals.map((ct: any) => ({
         category: ct.category,
         type: ct.type,
         total: ct._sum.amount || 0,
