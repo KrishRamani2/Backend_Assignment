@@ -129,7 +129,7 @@ app.use(errorHandler);
 
 // ─── Start Server ────────────────────────────────────────
 let server: any;
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   server = app.listen(config.port, () => {
     console.log(`
     ╔══════════════════════════════════════════════════╗
