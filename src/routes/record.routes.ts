@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { RecordController } from '../controllers/record.controller';
 import { authenticate } from '../middleware/auth';
 import { validateBody, validateQuery } from '../middleware/validate';
+import { roleGuard } from '../middleware/roleGuard';
+import { ROLES } from '../utils/constants';
 import {
   createRecordSchema,
   updateRecordSchema,
@@ -52,7 +54,12 @@ router.use(authenticate);
  *       400:
  *         description: Validation error
  */
-router.post('/', validateBody(createRecordSchema), RecordController.create);
+router.post(
+  '/',
+  roleGuard(ROLES.ADMIN),
+  validateBody(createRecordSchema),
+  RecordController.create
+);
 
 /**
  * @swagger
@@ -140,7 +147,12 @@ router.post('/', validateBody(createRecordSchema), RecordController.create);
  *                     totalPages:
  *                       type: integer
  */
-router.get('/', validateQuery(recordQuerySchema), RecordController.getAll);
+router.get(
+  '/',
+  roleGuard(ROLES.VIEWER, ROLES.ANALYST, ROLES.ADMIN),
+  validateQuery(recordQuerySchema),
+  RecordController.getAll
+);
 
 /**
  * @swagger
@@ -162,7 +174,11 @@ router.get('/', validateQuery(recordQuerySchema), RecordController.getAll);
  *       404:
  *         description: Record not found
  */
-router.get('/:id', RecordController.getById);
+router.get(
+  '/:id',
+  roleGuard(ROLES.VIEWER, ROLES.ANALYST, ROLES.ADMIN),
+  RecordController.getById
+);
 
 /**
  * @swagger
@@ -205,7 +221,12 @@ router.get('/:id', RecordController.getById);
  *       404:
  *         description: Record not found
  */
-router.put('/:id', validateBody(updateRecordSchema), RecordController.update);
+router.put(
+  '/:id',
+  roleGuard(ROLES.ADMIN),
+  validateBody(updateRecordSchema),
+  RecordController.update
+);
 
 /**
  * @swagger
@@ -230,6 +251,10 @@ router.put('/:id', validateBody(updateRecordSchema), RecordController.update);
  *       404:
  *         description: Record not found
  */
-router.delete('/:id', RecordController.delete);
+router.delete(
+  '/:id',
+  roleGuard(ROLES.ADMIN),
+  RecordController.delete
+);
 
 export default router;
