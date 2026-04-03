@@ -14,9 +14,7 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    accelerateUrl: process.env.DATABASE_URL,
-  }).$extends(withAccelerate());
+  new PrismaClient().$extends(withAccelerate());
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
