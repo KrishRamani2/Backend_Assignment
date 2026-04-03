@@ -27,11 +27,11 @@ export const swaggerSpec = {
   servers: [
     {
       url: 'https://backend-assignment-tau.vercel.app',
-      description: 'Production server (Vercel)',
+      description: 'Production server (Vercel) — use this',
     },
     {
       url: 'http://localhost:3000',
-      description: 'Development server',
+      description: 'Development server (local only)',
     },
   ],
   components: {
