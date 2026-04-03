@@ -30,17 +30,17 @@ const app = express();
 app.use(helmet({ contentSecurityPolicy: false }));
 
 // CORS — permissive configuration for frontends
-app.use(
-  cors({
-    origin: [
-      'https://backend-assignment-rosy-nu.vercel.app/',
-      'https://backend-assignment-tau.vercel.app/api/'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: true, // allows all origins dynamically
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+// IMPORTANT: handle preflight requests
+app.options("*", cors(corsOptions));
 
 // Request logging
 app.use(morgan(config.isProduction ? 'combined' : 'dev'));
@@ -139,6 +139,25 @@ app.get('/health', (_req, res) => {
       environment: config.nodeEnv,
     },
   });
+});
+
+// ─── Manual CORS Headers for Preflight & Swagger ─────────
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
 });
 
 // ─── API Routes ──────────────────────────────────────────

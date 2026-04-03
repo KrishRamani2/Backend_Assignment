@@ -10,6 +10,7 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ): void => {
+  res.header("Access-Control-Allow-Origin", "*");
   // Log error in development
   if (!config.isProduction) {
     console.error('❌ Error:', err.message);
