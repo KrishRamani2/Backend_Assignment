@@ -39,7 +39,15 @@ app.use(
 );
 
 // Handle OPTIONS preflight for Vercel
-app.options(/.*/, cors());
+app.use(
+  cors({
+    origin: [
+      '*',
+      'https://backend-assignment-rosy-nu.vercel.app/',
+    ],
+    credentials: true,
+  })
+);
 
 // Request logging
 app.use(morgan(config.isProduction ? 'combined' : 'dev'));
