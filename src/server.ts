@@ -33,7 +33,7 @@ app.use(helmet({ contentSecurityPolicy: false }));
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()).filter(Boolean);
 app.use(
   cors({
-    origin: allowedOrigins?.length ? allowedOrigins : '*',
+    origin: ['https://zorvyn-backend-assignment-rho.vercel.app/', 'http://localhost:3000/'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: false,
