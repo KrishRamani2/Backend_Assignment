@@ -111,8 +111,9 @@ app.get('/api-docs', (_req, res) => {
   <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
   <script>
     window.onload = () => {
+      const origin = window.location.origin;
       SwaggerUIBundle({
-        url: '/api-docs/json',
+        url: origin + '/api-docs/json',
         dom_id: '#swagger-ui',
         presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
         layout: 'StandaloneLayout',
@@ -121,6 +122,11 @@ app.get('/api-docs', (_req, res) => {
         filter: true,
         tryItOutEnabled: true,
         deepLinking: true,
+        requestInterceptor: (req) => {
+          // Always send requests to the same host as this page
+          req.url = req.url.replace(/https?:\/\/localhost:[0-9]+/, origin);
+          return req;
+        },
       });
     };
   </script>
