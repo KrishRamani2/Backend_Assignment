@@ -124,7 +124,9 @@ app.get('/api-docs', (_req, res) => {
         deepLinking: true,
         requestInterceptor: (req) => {
           // Always send requests to the same host as this page
-          req.url = req.url.replace(/https?:\/\/localhost:[0-9]+/, origin);
+          if (req.url.includes('localhost')) {
+            req.url = req.url.replace('http://localhost:3000', origin);
+          }
           return req;
         },
       });
