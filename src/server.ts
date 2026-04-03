@@ -29,18 +29,12 @@ const app = express();
 // Security headers
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// CORS — always open; restrict via ALLOWED_ORIGINS env var if needed
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()).filter(Boolean);
+// CORS — permissive configuration for frontends
 app.use(
   cors({
-    origin: [
-      'https://zorvyn-backend-assignment-rho.vercel.app',
-      'https://backend-assignment-tau.vercel.app',
-      'http://localhost:3000',
-    ],
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: false,
   })
 );
 
