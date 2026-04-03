@@ -12,7 +12,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": "https://backend-assignment-rosy-nu.vercel.app/"
         },
         {
           "key": "Access-Control-Allow-Methods",
