@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────
+# Finance Dashboard API — Docker Compose
+# ─────────────────────────────────────────────────────────
+# Quick start:
+#   docker compose up --build
+#
+# The app will be available at http://localhost:3000
+# Swagger UI: http://localhost:3000/api-docs
+# Health:     http://localhost:3000/health
+# ─────────────────────────────────────────────────────────
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finance-dashboard-api
+    ports:
+      - "3000:3000"
+    environment:
+      # Override any of these with a .env file or inline values
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-24h}
+      - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS:-12}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
