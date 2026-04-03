@@ -32,19 +32,12 @@ app.use(helmet({ contentSecurityPolicy: false }));
 // CORS — permissive configuration for frontends
 app.use(
   cors({
-    origin: '*',
+    origin: [
+      'https://backend-assignment-rosy-nu.vercel.app/',
+      'https://backend-assignment-tau.vercel.app/api/'
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
-
-// Handle OPTIONS preflight for Vercel
-app.use(
-  cors({
-    origin: [
-      '*',
-      'https://backend-assignment-rosy-nu.vercel.app/',
-    ],
     credentials: true,
   })
 );
