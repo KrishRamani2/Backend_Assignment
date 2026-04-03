@@ -29,16 +29,19 @@ const app = express();
 // Security headers
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// CORS
+// CORS — always open; restrict via ALLOWED_ORIGINS env var if needed
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()).filter(Boolean);
 app.use(
   cors({
-    origin: config.isProduction
-      ? process.env.ALLOWED_ORIGINS?.split(',')
-      : '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    origin: allowedOrigins?.length ? allowedOrigins : '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: false,
   })
 );
+
+// Handle OPTIONS preflight for Vercel
+app.options(/.*/, cors());
 
 // Request logging
 app.use(morgan(config.isProduction ? 'combined' : 'dev'));
